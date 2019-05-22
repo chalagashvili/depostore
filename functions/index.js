@@ -7,6 +7,7 @@
 
 // The Cloud Functions for Firebase SDK to create Cloud Functions and setup triggers.
 const functions = require("firebase-functions");
+const client = require("twilio")(accountSid, authToken);
 
 // The Firebase Admin SDK to access the Firebase Realtime Database.
 const admin = require("firebase-admin");
@@ -43,3 +44,25 @@ exports.makeUppercase = functions.database
     // Setting an "uppercase" sibling in the Realtime Database returns a Promise.
     return snapshot.ref.parent.child("uppercase").set(uppercase);
   });
+
+exports.generateSmsCode = functions.https.onRequest(async (req, res) => {
+  const mobileNumber = req.body.mobileNumber;
+  const generatedCode = 7777;
+  const bodyText = `Your verification code is ${generatedCode}`;
+  // set the code to db to the user with expiration
+  client.messages
+    .create({ from: "+15017122661", body: bodyText, to: mobileNumber })
+    .then(message => {
+      return res.status(200).send({
+        success: true,
+        message: "The code has been successfully generated and sent to the user"
+      });
+    })
+    .catch(error => {
+      return res.status(200).send({
+        success: false,
+        message:
+          "The code has been successfully generated but could not be sent the indicated mobile number! Check the number and try again!"
+      });
+    });
+});
