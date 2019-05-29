@@ -66,3 +66,35 @@ exports.generateSmsCode = functions.https.onRequest(async (req, res) => {
       });
     });
 });
+
+exports.generateRevenueReport((req, res) => {
+  const userId = 777; //decode user id
+  const from = req.body.from;
+  const to = req.body.to;
+  const depositsRef = db
+    .collection("users")
+    .doc(userId)
+    .collection("deposits")
+    .get()
+    .then(deposits => {
+      deposits.forEach(deposit => {
+        const depositData = deposit.data();
+      });
+    });
+});
+
+//     private static double GetOverlappingDays(DateTime firstStart, DateTime firstEnd, DateTime secondStart, DateTime secondEnd)
+// {
+//   DateTime maxStart = firstStart > secondStart ? firstStart : secondStart;
+//   DateTime minEnd = firstEnd < secondEnd ? firstEnd : secondEnd;
+//   TimeSpan interval = minEnd - maxStart;
+//   double returnValue = interval > TimeSpan.FromSeconds(0) ? interval.TotalDays : 0;
+//   return returnValue;
+// }
+
+// function dateRangeOverlaps(a_start, a_end, b_start, b_end) {
+//   if (a_start <= b_start && b_start <= a_end) return true; // b starts in a
+//   if (a_start <= b_end && b_end <= a_end) return true; // b ends in a
+//   if (b_start < a_start && a_end < b_end) return true; // a in b
+//   return false;
+// }
